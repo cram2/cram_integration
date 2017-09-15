@@ -1,5 +1,4 @@
-;;;
-;;; Copyright (c) 2010, Lorenz Moesenlechner <moesenle@in.tum.de>
+;;; Copyright (c) 2012, Lorenz Moesenlechner <moesenle@in.tum.de>
 ;;; All rights reserved.
 ;;; 
 ;;; Redistribution and use in source and binary forms, with or without
@@ -26,34 +25,15 @@
 ;;; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
-;;;
 
-(in-package :json-prolog)
+(in-package :cl-user)
 
-(defun rename-prolog-vars (vars)
-  "Renames variables and creates valid names for prolog. Returns an
-alist of the form ((new-var . old-var) ...)"
-  (mapcar (lambda (var)
-            ;; We need to re-intern the symbol to get it in a sane package
-            (cons var (intern (symbol-name (gen-var (substitute #\_ #\- (symbol-name var)))))))
-          vars))
-
-(prolog:def-prolog-handler json-prolog (bdgs form &rest key-args &key prologify lispify package)
-  (declare (ignore prologify lispify package))
-  (when (wait-for-prolog-service 0.5)
-    (let* ((form (substitute-vars form bdgs))
-           (vars (remove-if #'is-unnamed-var (vars-in form)))
-           (var-mappings (rename-prolog-vars vars))
-           ;; force-ll to make sure the json query is finished immediately
-           (result (force-ll (apply #'prolog (sublis var-mappings form)
-                                    key-args))))
-      (lazy-mapcar (lambda (binding)
-                     (block nil
-                       (reduce (lambda (bdgs var)
-                                 (let ((val (cdr (assoc var var-mappings))))
-                                   (or
-                                    (add-bdg var (var-value val binding)
-                                             bdgs)
-                                    (return nil))))
-                               vars :initial-value bdgs)))
-                   result))))
+(defpackage cram-semantic-map-designators
+  (:nicknames #:sem-map-desig)
+  (:use #:common-lisp #:cram-designators #:cram-prolog
+        #:cram-semantic-map-utils #:cram-utilities)
+  (:shadowing-import-from #:cram-semantic-map-utils #:parent)
+  (:export
+   ;; designator-utils
+   #:designator->semantic-map-objects
+   #:semantic-map-object-poses))

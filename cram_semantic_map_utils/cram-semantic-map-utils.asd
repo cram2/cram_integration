@@ -1,5 +1,5 @@
 ;;;
-;;; Copyright (c) 2009, Lorenz Moesenlechner <moesenle@cs.tum.edu>
+;;; Copyright (c) 2011, Lorenz Moesenlechner <moesenle@in.tum.de>
 ;;; All rights reserved.
 ;;; 
 ;;; Redistribution and use in source and binary forms, with or without
@@ -10,9 +10,10 @@
 ;;;     * Redistributions in binary form must reproduce the above copyright
 ;;;       notice, this list of conditions and the following disclaimer in the
 ;;;       documentation and/or other materials provided with the distribution.
-;;;     * Neither the name of Willow Garage, Inc. nor the names of its
-;;;       contributors may be used to endorse or promote products derived from
-;;;       this software without specific prior written permission.
+;;;     * Neither the name of the Intelligent Autonomous Systems Group/
+;;;       Technische Universitaet Muenchen nor the names of its contributors 
+;;;       may be used to endorse or promote products derived from this software 
+;;;       without specific prior written permission.
 ;;; 
 ;;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 ;;; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -27,21 +28,20 @@
 ;;; POSSIBILITY OF SUCH DAMAGE.
 ;;;
 
-(in-package :cl-user)
-
-(defpackage :json-prolog
-    (:use #:common-lisp #:cram-utilities #:roslisp)
-  (:export #:*service-namespace*
-           #:check-connection
-           #:prolog
-           #:prolog-1
-           #:prolog-simple
-           #:prolog-simple-1
-           #:finish-query
-           #:json-prolog
-           #:wait-for-prolog-service
-           #:with-type-atoms
-           #:init-type-atoms
-           #:clear-type-atoms
-           #:replace-complex-types
-           #:start-prolog-server))
+(defsystem cram-semantic-map-utils
+  :author "Lorenz Moesenlechner"
+  :license "BSD"
+  :description "Utilities to work with semantic maps in lisp"
+  
+  :depends-on (cram-json-prolog
+               roslisp-utilities
+               roslisp
+               cram-utilities
+               cl-transforms)
+  :components
+  ((:module "src"
+    :components
+    ((:file "package")
+     (:file "owl-type-initializers" :depends-on ("package"))
+     (:file "semantic-map" :depends-on ("package" "owl-type-initializers"))
+     (:file "articulation-utilities" :depends-on ("package" "semantic-map"))))))
