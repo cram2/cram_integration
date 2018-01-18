@@ -1,3 +1,4 @@
+;;;
 ;;; Copyright (c) 2017, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
 ;;; All rights reserved.
 ;;;
@@ -26,71 +27,30 @@
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
 
-(defsystem cram-pr2-cloud
-  :author "Gayane Kazhoyan"
-  :maintainer "Gayane Kazhoyan"
+(defsystem cram-pr2-pick-place-plans
+  :author "gaya"
   :license "BSD"
 
-  :depends-on (cl-transforms
+  :depends-on (roslisp
+
+               cl-transforms
                cl-transforms-stamped
-               cl-tf2
                cram-tf
 
                cram-language
-               cram-prolog
-               cram-designators
-               cram-process-modules
-               cram-math
-               cram-occasions-events
                cram-executive
-               cram-utilities ; for cut:var-value of prolog stuff
-
-               cram-plan-occasions-events
-               ;; cram-bullet-reasoning-belief-state ; for event handling ; using own stuff for now
-
-               giskard_msgs-msg
-               giskard_msgs-srv
+               cram-designators
+               cram-prolog
 
                cram-common-failures
-               cram-robot-interfaces
-               cram-pr2-low-level
-               cram-pr2-process-modules
                cram-mobile-pick-place-plans
 
-               cram-knowrob-cloud
-
-               cram-pr2-projection
-               cram-bullet-reasoning-belief-state
-               cram-bullet-reasoning-utilities
-
-               cram-location-costmap
-               cram-semantic-map-costmap
-               cram-robot-pose-gaussian-costmap
-               ;; pr2-reachability-costmap
+               cram-pr2-projection-reasoning ; for projection-based reasoning
                )
 
   :components
   ((:module "src"
     :components
     ((:file "package")
-     (:file "tf-utilities" :depends-on ("package"))
-     (:file "geometry-calculations" :depends-on ("package" "tf-utilities"))
-     (:file "cloud-data" :depends-on ("package" "tf-utilities" "geometry-calculations"))
-     (:file "local-data" :depends-on ("package"
-                                      "tf-utilities"
-                                      "geometry-calculations"
-                                      "cloud-data"))
-     (:file "costmaps" :depends-on ("package" "local-data" "tf-utilities"))
-     (:file "projection-plans" :depends-on ("package"))
-     (:file "real-world-plans" :depends-on ("package"
-                                            "tf-utilities"
-                                            "local-data"
-                                            "projection-plans"
-                                            "costmaps"))))))
-
-;; tf-utilities
-;; geometry-calculations
-;; cloud-data
-;; local-data
-;; projection-plans
-;; real-world-plans
+     (:file "fetch-and-deliver-plans" :depends-on ("package"))
+     (:file "fetch-and-deliver-designators" :depends-on ("package" "fetch-and-deliver-plans"))))))

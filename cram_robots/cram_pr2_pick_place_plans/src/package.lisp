@@ -1,4 +1,5 @@
-;;; Copyright (c) 2016, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
+;;;
+;;; Copyright (c) 2017, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
 ;;; All rights reserved.
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
@@ -26,27 +27,14 @@
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
 
-(defsystem cram-pr2-process-modules
-  :author "Gayane Kazhoyan"
-  :maintainer "Gayane Kazhoyan"
-  :license "BSD"
+(in-package :cl-user)
 
-  :depends-on (cram-process-modules
-               cram-prolog
-               cram-designators
-               cram-pr2-low-level
-               cram-tf
-               cram-common-failures
-               cram-common-designators)
+(defpackage cram-pr2-pick-place-plans
+  (:nicknames #:pr2-pp-plans)
+  (:use #:common-lisp #:cram-prolog)
+  (:export
+   ;; setup
+   ;; #:bla
+   ;; demo
+   ))
 
-  :components
-  ((:module "src"
-    :components
-    ((:file "package")
-     (:file "designators" :depends-on ("package"))
-     (:file "grippers" :depends-on ("package"))
-     (:file "ptu" :depends-on ("package"))
-     (:file "base" :depends-on ("package"))
-     (:file "arms" :depends-on ("package"))
-     ;; (:file "perception" :depends-on ("package"))
-     ))))

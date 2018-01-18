@@ -1,4 +1,4 @@
-;;; Copyright (c) 2016, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
+;;; Copyright (c) 2017, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
 ;;; All rights reserved.
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
@@ -26,27 +26,24 @@
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
 
-(defsystem cram-pr2-process-modules
+(defsystem cram-pr2-projection-reasoning
   :author "Gayane Kazhoyan"
-  :maintainer "Gayane Kazhoyan"
   :license "BSD"
 
-  :depends-on (cram-process-modules
-               cram-prolog
-               cram-designators
-               cram-pr2-low-level
-               cram-tf
-               cram-common-failures
-               cram-common-designators)
+  :depends-on (roslisp
 
+               cram-designators
+               cram-language
+               cram-utilities ; for EQUALIZE-LISTS-OF-LISTS-LENGTHS
+
+               cram-common-failures
+               cram-mobile-pick-place-plans
+
+               cram-bullet-reasoning
+
+               cram-pr2-projection)
   :components
   ((:module "src"
     :components
     ((:file "package")
-     (:file "designators" :depends-on ("package"))
-     (:file "grippers" :depends-on ("package"))
-     (:file "ptu" :depends-on ("package"))
-     (:file "base" :depends-on ("package"))
-     (:file "arms" :depends-on ("package"))
-     ;; (:file "perception" :depends-on ("package"))
-     ))))
+     (:file "check-collisions" :depends-on ("package"))))))
