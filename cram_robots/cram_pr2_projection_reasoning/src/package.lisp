@@ -1,5 +1,5 @@
 ;;;
-;;; Copyright (c) 2016, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
+;;; Copyright (c) 2017, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
 ;;; All rights reserved.
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
@@ -27,20 +27,9 @@
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
 
-(in-package :cl-user)
-
-(defpackage cram-pr2-pick-place-plans
-  (:nicknames :pr2-pp-plans)
-  (:use #:common-lisp #:cram-prolog)
+(defpackage cram-pr2-projection-reasoning
+  (:nicknames #:pr2-proj-reasoning)
+  (:use #:common-lisp)
   (:export
-   ;; atomic-action-plans
-   #:move-arms-in-sequence #:park-arms
-   #:release #:grip #:close-gripper #:set-gripper-to-position
-   #:look-at #:navigate
-   ;; pick-place-plans
-   #:pick-up #:place
-   ;; high-level-plans
-   #:perceive
-   #:drive-to-reach-pose #:drive-towards-object-plan #:drive-and-pick-up-plan
-   #:perceive-and-drive-and-pick-up-plan
-   #:pick-and-place-plan))
+   ;; check-collisions
+   #:check-navigating-collisions #:check-picking-up-collisions #:check-placing-collisions))

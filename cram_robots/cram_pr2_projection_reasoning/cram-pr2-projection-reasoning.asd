@@ -1,4 +1,4 @@
-;;; Copyright (c) 2016, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
+;;; Copyright (c) 2017, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
 ;;; All rights reserved.
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
@@ -26,53 +26,24 @@
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
 
-(defsystem cram-pr2-pick-place-plans
+(defsystem cram-pr2-projection-reasoning
   :author "Gayane Kazhoyan"
-  :maintainer "Gayane Kazhoyan"
   :license "BSD"
 
-  :depends-on (cl-transforms
-               cl-transforms-stamped
-               ;; cl-tf2 ; in grasping overwrite tf transformer with tf2
-               cram-tf
+  :depends-on (roslisp
 
-               roslisp-utilities
-
-               cram-language
-               cram-prolog
                cram-designators
-               ;; cram-occasions-events
-               cram-executive
-               cram-utilities ; for cut:var-value of prolog stuff
-
-               ;; cram-plan-occasions-events
-               ;; cram-bullet-reasoning ; for event handling with belief state
+               cram-language
+               cram-utilities ; for EQUALIZE-LISTS-OF-LISTS-LENGTHS
 
                cram-common-failures
+               cram-mobile-pick-place-plans
 
-               ;; pr2-reachability-costmap ; doesn't work somehow
-               cram-semantic-map-costmap
-               cram-robot-pose-gaussian-costmap
+               cram-bullet-reasoning
 
-               cram-object-interfaces
-               cram-knowrob-pick-place)
-
+               cram-pr2-projection)
   :components
   ((:module "src"
     :components
     ((:file "package")
-
-     ;; actions such as REACHING, LIFTING, GRASPING, GRIPPING, LOOKING-AT, etc.
-     (:file "atomic-action-plans" :depends-on ("package"))
-     (:file "atomic-action-designators" :depends-on ("package" "atomic-action-plans"))
-
-     ;; PICKING-UP and PLACING actions
-     ;; (:file "occasions-events" :depends-on ("package")) ; should use cram_knowrob instead
-     (:file "pick-place-plans" :depends-on ("package" "atomic-action-designators"))
-     (:file "pick-place-designators" :depends-on ("package"
-                                                  "pick-place-plans"))
-
-     ;; high-level plans such as DRIVE-AND-PICK-UP, PERCEIVE, etc.
-     (:file "high-level-plans" :depends-on ("package"
-                                            "atomic-action-designators"
-                                            "pick-place-designators"))))))
+     (:file "check-collisions" :depends-on ("package"))))))
