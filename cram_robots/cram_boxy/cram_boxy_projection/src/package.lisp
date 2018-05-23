@@ -1,5 +1,5 @@
 ;;;
-;;; Copyright (c) 2016, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
+;;; Copyright (c) 2018, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
 ;;; All rights reserved.
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
@@ -27,41 +27,12 @@
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
 
-(in-package :boxy-plans)
-
-(cpl:def-cram-function wiggle (left-poses right-poses)
-  (let (?arm ?target-pose)
-    (if (car left-poses)
-        (setf ?arm :left
-              ?target-pose (car left-poses))
-        (if (car right-poses)
-            (setf ?arm :right
-                  ?target-pose (car right-poses))
-            (error "pushing action needs a goal for at least one arm.")))
-
-    (cpl:with-failure-handling
-        ((common-fail:low-level-failure (e) ; ignore failures
-           (roslisp:ros-warn (boxy-plans wiggle) "~a" e)
-           (return)))
-
-      (exe:perform
-       (desig:a motion
-                (type wiggling-tcp)
-                (arm ?arm)
-                (target (desig:a location (pose ?target-pose))))))))
-
-
-(cpl:def-cram-function cram-inspect (?object-designator)
-  (cpl:with-retry-counters ((perceive-retries 4))
-    (cpl:with-failure-handling
-        ((common-fail:perception-object-not-found (e)
-           (cpl:do-retry perceive-retries
-             (roslisp:ros-warn (boxy-plans perceive) "~a" e)
-             (cpl:sleep 1.0)
-             (cpl:retry))))
-      (exe:perform
-       (desig:a motion
-                (type inspecting)
-                (object ?object-designator)))
-      ;; (cram-robosherlock:perceive detect-or-inspect object-designator)
-      )))
+(defpackage cram-boxy-projection
+  (:nicknames #:boxy-proj)
+  (:use #:common-lisp #:cram-prolog)
+  (:export
+   ;; ik
+   ;; #:*torso-step*
+   ;; projection-environment
+   #:with-simulated-robot #:with-projected-robot
+   #:boxy-bullet-projection-environment))

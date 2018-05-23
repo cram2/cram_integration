@@ -1,4 +1,5 @@
-;;; Copyright (c) 2017, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
+;;;
+;;; Copyright (c) 2018, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
 ;;; All rights reserved.
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
@@ -26,23 +27,57 @@
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
 
-(defsystem cram-knowrob-pick-place
-  :author "Gayane Kazhoyan"
-  :maintainer "Gayane Kazhoyan"
+(defsystem cram-boxy-assembly-demo
+  :author "gaya"
   :license "BSD"
 
-  :depends-on (cram-json-prolog
-               cram-utilities
-               cl-transforms-stamped
+  :depends-on (roslisp-utilities ; for ros-init-function
+
                cl-transforms
+               cl-transforms-stamped
+               cl-tf
+               cl-tf2
                cram-tf
+
+               cram-language
+               cram-executive
+               cram-designators
+               cram-prolog
+               cram-projection
                cram-occasions-events
-               cram-plan-occasions-events
-               cram-object-interfaces
-               roslisp-utilities ; for rosify-lisp-name
-               cram-prolog)
+               cram-utilities ; for EQUALIZE-LISTS-OF-LISTS-LENGTHS
+
+               cram-common-failures
+               cram-mobile-pick-place-plans
+
+               cram-knowrob-assembly
+               cram-robosherlock
+
+               cram-physics-utils ; for reading "package://" paths
+               cl-bullet ; for handling BOUNDING-BOX datastructures
+               cram-bullet-reasoning
+               cram-bullet-reasoning-belief-state
+               cram-bullet-reasoning-utilities
+               cram-bullet-reasoning-designators
+
+               cram-semantic-map-costmap
+               ; cram-bullet-reasoning-costmap ; not using any spatial relation cms yet
+               ; cram-bullet-reasoning-designators ; not using visibility cm or collision checks
+               cram-robot-pose-gaussian-costmap
+               cram-occupancy-grid-costmap
+               cram-location-costmap
+
+               cram-boxy-projection      ; for with-simulated-robot
+               cram-boxy-description
+               ;; cram-boxy-low-level
+               cram-process-modules
+               ;; cram-boxy-process-modules
+               cram-boxy-plans)
+
   :components
   ((:module "src"
     :components
     ((:file "package")
-     (:file "grasping" :depends-on ("package"))))))
+     (:file "setup" :depends-on ("package"))
+     (:file "projection-demo" :depends-on ("package"))
+     (:file "demo" :depends-on ("package" "projection-demo"))))))

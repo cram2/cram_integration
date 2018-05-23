@@ -26,23 +26,39 @@
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
 
-(defsystem cram-knowrob-pick-place
+(defsystem cram-boxy-projection
   :author "Gayane Kazhoyan"
-  :maintainer "Gayane Kazhoyan"
   :license "BSD"
 
-  :depends-on (cram-json-prolog
+  :depends-on (cram-projection
+               cram-prolog
+               cram-designators
                cram-utilities
-               cl-transforms-stamped
-               cl-transforms
+               cram-bullet-reasoning
                cram-tf
+               cram-robot-interfaces    ; for ROBOT predicate and COMPUTE-IKS
+               cl-transforms
+               cl-transforms-stamped
+               cl-tf
                cram-occasions-events
                cram-plan-occasions-events
-               cram-object-interfaces
+               cram-boxy-description ; to get kinematic structure names
+               cram-common-designators
+               cram-common-failures
+               cram-process-modules
+               alexandria ; for CURRY in low-level perception
                roslisp-utilities ; for rosify-lisp-name
-               cram-prolog)
+               cram-semantic-map ; for special projection variable definition
+               cram-bullet-reasoning-belief-state ; for special projection variable definition
+               cram-simple-actionlib-client ; for communicating with giskard
+               giskard_msgs-msg ; for communicating with giskard
+               )
   :components
   ((:module "src"
     :components
     ((:file "package")
-     (:file "grasping" :depends-on ("package"))))))
+     (:file "tf" :depends-on ("package"))
+     (:file "giskard" :depends-on ("package"))
+     (:file "low-level" :depends-on ("package" "tf" "giskard"))
+     (:file "process-modules" :depends-on ("package" "low-level"))
+     (:file "projection-environment" :depends-on ("package" "tf" "process-modules"))))))
