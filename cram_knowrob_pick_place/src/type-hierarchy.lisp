@@ -1,4 +1,5 @@
-;;; Copyright (c) 2018, Christopher Pollok <cpollok@uni-bremen.de>
+;;;
+;;; Copyright (c) 2018, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
 ;;; All rights reserved.
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
@@ -26,45 +27,9 @@
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
 
-(defsystem cram-pr2-environment-manipulation
-  :author "Christopher Pollok"
-  :license "BSD"
+(in-package :kr-pp)
 
-  :depends-on (roslisp-utilities
-
-               cl-transforms
-               cl-transforms-stamped
-               cram-tf
-
-               cram-language
-               cram-executive
-               cram-designators
-               cram-prolog
-               cram-projection
-               cram-occasions-events
-               cram-utilities ; for EQUALIZE-LISTS-OF-LISTS-LENGTHS
-
-               cram-common-failures
-               cram-mobile-pick-place-plans
-               cram-robot-interfaces ; for REACHABILITY-DESIGNATOR predicate
-               cram-object-interfaces
-               cram-designator-specification
-
-               cl-bullet ; for handling BOUNDING-BOX datastructures
-               cram-bullet-reasoning
-               cram-bullet-reasoning-belief-state
-               cram-bullet-reasoning-utilities
-
-               cram-robot-pose-gaussian-costmap
-               cram-occupancy-grid-costmap
-               cram-location-costmap)
-  :components
-  ((:module "src"
-    :components
-    ((:file "package")
-     (:file "math" :depends-on ("package"))
-     (:file "environment" :depends-on ("package"))
-     (:file "costmaps" :depends-on ("package" "math" "environment"))
-     (:file "grasping" :depends-on ("package"))
-     (:file "action-designators" :depends-on ("package" "grasping"))
-     (:file "plans" :depends-on ("package" "environment"))))))
+(def-fact-group object-type-hierarchy (obj-int:object-type-direct-subtype)
+  (<- (obj-int:object-type-direct-subtype :container :drawer))
+  (<- (obj-int:object-type-direct-subtype :container :refrigerator))
+  (<- (obj-int:object-type-direct-subtype :refrigerator :fridge)))
