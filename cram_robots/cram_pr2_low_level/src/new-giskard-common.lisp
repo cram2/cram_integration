@@ -1,5 +1,5 @@
 ;;;
-;;; Copyright (c) 2017, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
+;;; Copyright (c) 2018, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
 ;;; All rights reserved.
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
@@ -27,24 +27,14 @@
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
 
-(defpackage cram-pr2-projection
-  (:nicknames #:pr2-proj)
-  (:use #:common-lisp
-        #:cram-prolog
-        ;; #:cram-bullet-reasoning
-        ;; #:cram-process-modules
-        ;; #:cram-projection
-        ;; #:cl-transforms-stamped
-        ;; #:cram-robot-interfaces
-        ;; #:cram-tf
-        )
-  (:export
-   ;; projection-clock
-   #:action-duration #:projection-timestamp-function #:execute-as-action
-   ;; ik
-   #:*torso-step*
-   ;; projection-environment
-   #:with-simulated-robot #:with-projected-robot
-   #:pr2-bullet-projection-environment
-   ;; low-level
-   #:*debug-short-sleep-duration* #:*debug-long-sleep-duration*))
+(in-package :pr2-ll)
+
+(defun make-giskard-action-client ()
+  (actionlib-client:make-simple-action-client
+   'giskard-action
+   "qp_controller/command" "giskard_msgs/MoveAction"
+   60))
+
+(roslisp-utilities:register-ros-init-function make-giskard-action-client)
+
+
