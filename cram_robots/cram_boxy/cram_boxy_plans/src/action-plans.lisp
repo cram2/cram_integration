@@ -29,26 +29,26 @@
 
 (in-package :boxy-plans)
 
-(cpl:def-cram-function wiggle (left-poses right-poses)
-  (let (?arm ?target-pose)
-    (if (car left-poses)
-        (setf ?arm :left
-              ?target-pose (car left-poses))
-        (if (car right-poses)
-            (setf ?arm :right
-                  ?target-pose (car right-poses))
-            (error "pushing action needs a goal for at least one arm.")))
+;; (cpl:def-cram-function wiggle (left-poses right-poses)
+;;   (let (?arm ?target-pose)
+;;     (if (car left-poses)
+;;         (setf ?arm :left
+;;               ?target-pose (car left-poses))
+;;         (if (car right-poses)
+;;             (setf ?arm :right
+;;                   ?target-pose (car right-poses))
+;;             (error "pushing action needs a goal for at least one arm.")))
 
-    (cpl:with-failure-handling
-        ((common-fail:low-level-failure (e) ; ignore failures
-           (roslisp:ros-warn (boxy-plans wiggle) "~a" e)
-           (return)))
+;;     (cpl:with-failure-handling
+;;         ((common-fail:low-level-failure (e) ; ignore failures
+;;            (roslisp:ros-warn (boxy-plans wiggle) "~a" e)
+;;            (return)))
 
-      (exe:perform
-       (desig:a motion
-                (type wiggling-tcp)
-                (arm ?arm)
-                (target (desig:a location (pose ?target-pose))))))))
+;;       (exe:perform
+;;        (desig:a motion
+;;                 (type wiggling-tcp)
+;;                 (arm ?arm)
+;;                 (pose ?target-pose))))))
 
 
 (cpl:def-cram-function cram-inspect (?object-designator)
@@ -65,3 +65,14 @@
                 (object ?object-designator)))
       ;; (cram-robosherlock:perceive detect-or-inspect object-designator)
       )))
+
+(cpl:def-cram-function look (?left-goal-pose ?right-goal-pose)
+  (roslisp:ros-info (boxy-plans look) "Looking with wrist camera")
+  (exe:perform (desig:an action
+                         (type reaching)
+                         (left-poses (?left-goal-pose))
+                         (right-poses (?right-goal-pose))))
+  (cpl:sleep 1.0)
+  (print "slept 1")
+  (cpl:sleep 1.0)
+  (print "slept 2"))
