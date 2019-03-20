@@ -1,5 +1,5 @@
 ;;;
-;;; Copyright (c) 2016, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
+;;; Copyright (c) 2017, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
 ;;; All rights reserved.
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
@@ -29,13 +29,13 @@
 
 (in-package :cl-user)
 
-(defpackage cram-pr2-low-level
-  (:nicknames #:pr2-ll)
-  (:use #:common-lisp #:cram-tf)
+(defpackage cram-robosherlock
+  (:nicknames #:rs)
+  (:use #:common-lisp #:cram-manipulation-interfaces)
   (:export
-   ;; actionlib actions
-   #:call-gripper-action
-   #:call-joint-trajectory-action
-   #:call-joint-angle-action
-   #:call-ptu-action
-   #:call-torso-action))
+   ;; robosherlock-json
+   #:call-robosherlock-service
+   ;; api
+   #:perceive
+   ;; designator-integration
+   #:robosherlock-perception-pm))

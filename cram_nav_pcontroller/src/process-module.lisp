@@ -27,15 +27,41 @@
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
 
-(in-package :cl-user)
+(in-package :navp)
 
-(defpackage cram-pr2-low-level
-  (:nicknames #:pr2-ll)
-  (:use #:common-lisp #:cram-tf)
-  (:export
-   ;; actionlib actions
-   #:call-gripper-action
-   #:call-joint-trajectory-action
-   #:call-joint-angle-action
-   #:call-ptu-action
-   #:call-torso-action))
+(cpm:def-process-module navp-pm (motion-designator)
+  (destructuring-bind (command destination-pose)
+      (desig:reference motion-designator)
+    (ecase command
+      (cram-common-designators:move-base
+       (call-nav-pcontroller-action destination-pose :visualize t)))))
+
+(prolog:def-fact-group navp-pm (cpm:matching-process-module
+                                cpm:available-process-module)
+
+  (prolog:<- (cpm:matching-process-module ?motion-designator navp-pm)
+    (desig:desig-prop ?motion-designator (:type :going)))
+
+  (prolog:<- (cpm:available-process-module navp-pm)
+    (prolog:not (cpm:projection-running ?_))))
+
+
+;; The example is outdated but the idea is the same
+;; Example:
+;;
+;; (cl-tf::with-tf-broadcasting
+;;     ((cl-tf:make-transform-broadcaster)
+;;      (cl-tf:make-transform-stamped
+;;       "map"
+;;       "odom_combined"
+;;       0.0
+;;       (cl-transforms:make-identity-vector)
+;;       (cl-transforms:make-identity-rotation)))
+;;
+;;   (cram-process-modules:with-process-modules-running
+;;       (pr2-pms::pr2-grippers-pm pr2-pms::pr2-ptu-pm pr2-pms::pr2-base-pm)
+;;     (cpl:top-level
+;;       (cpm:pm-execute-matching
+;;        (desig:an action
+;;                  (to go)
+;;                  (to ((0 1.9 0) (0 0 0 1))))))))

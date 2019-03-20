@@ -1,5 +1,5 @@
 ;;;
-;;; Copyright (c) 2016, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
+;;; Copyright (c) 2017, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
 ;;; All rights reserved.
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
@@ -27,15 +27,25 @@
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
 
-(in-package :cl-user)
+(in-package :rs)
 
-(defpackage cram-pr2-low-level
-  (:nicknames #:pr2-ll)
-  (:use #:common-lisp #:cram-tf)
-  (:export
-   ;; actionlib actions
-   #:call-gripper-action
-   #:call-joint-trajectory-action
-   #:call-joint-angle-action
-   #:call-ptu-action
-   #:call-torso-action))
+(cpm:def-process-module robosherlock-perception-pm (motion-designator)
+  (destructuring-bind (command argument-1) (desig:reference motion-designator)
+    (ecase command
+      (cram-common-designators:detect
+       (handler-case
+           (perceive :detect argument-1)))
+      (cram-common-designators:inspect
+       (handler-case
+           (perceive :inspect argument-1))))))
+
+
+(prolog:def-fact-group rs-pm (cpm:matching-process-module
+                              cpm:available-process-module)
+
+  (prolog:<- (cpm:matching-process-module ?motion-designator robosherlock-perception-pm)
+    (or (desig:desig-prop ?motion-designator (:type :detecting))
+        (desig:desig-prop ?motion-designator (:type :inspecting))))
+
+  (prolog:<- (cpm:available-process-module robosherlock-perception-pm)
+    (prolog:not (cpm:projection-running ?_))))
