@@ -26,30 +26,24 @@
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
 
-(defsystem cram-knowrob-assembly
+(defsystem cram-knowrob-world-state
   :author "Gayane Kazhoyan"
   :maintainer "Gayane Kazhoyan"
   :license "BSD"
 
   :depends-on (cram-json-prolog
-               cram-utilities
-               cl-transforms-stamped
-               cl-transforms
-               cram-tf
+               cram-utilities ; for querying rob-int
+               cram-prolog
+               cram-robot-interfaces
                cram-occasions-events
                cram-plan-occasions-events
-               cram-manipulation-interfaces)
+               cram-projection ; for unless cram-proj:*proj-env*
+               cram-bullet-reasoning ; for simulating world to fix object pose Z
+               cl-transforms
+               cl-transforms-stamped
+               cram-tf)
   :components
   ((:module "src"
     :components
     ((:file "package")
-     ;; (:file "conversions" :depends-on ("package"))
-     ;; (:file "assertions" :depends-on ("package" "conversions"))
-     ;; (:file "extracting-info" :depends-on ("package" "conversions"))
-     ;; (:file "event-handlers" :depends-on ("package" "conversions" "assertions" "extracting-info"))
-     (:file "grasping" :depends-on ("package" ;; "extracting-info"
-                                              ))
-     (:file "placing" :depends-on ("package" "grasping" ;; "extracting-info"
-                                             ))
-     (:file "looking" :depends-on ("package" ;; "extracting-info"
-                                             ))))))
+     (:file "world-state-maintenance" :depends-on ("package"))))))
