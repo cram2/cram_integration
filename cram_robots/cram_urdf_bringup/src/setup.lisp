@@ -29,8 +29,6 @@
 
 (in-package :demo)
 
-;; roslaunch cram_boxy_assembly_demo sandbox.launch
-
 (defvar *kitchen-urdf* nil)
 (defparameter *robot-parameter* "robot_description")
 (defparameter *kitchen-parameter* "kitchen_description")
@@ -38,35 +36,22 @@
 (defun setup-bullet-world ()
   (setf btr:*current-bullet-world* (make-instance 'btr:bt-reasoning-world))
 
-  (let ((robot (or rob-int:*robot-urdf*
-                   (setf rob-int:*robot-urdf*
-                         (cl-urdf:parse-urdf
-                          (roslisp:get-param *robot-parameter*)))))
+  (let* ((robot-urdf (substitute #\SPACE #\` (roslisp:get-param *robot-parameter*)))
+         (robot (or rob-int:*robot-urdf*
+                    (setf rob-int:*robot-urdf*
+                          (cl-urdf:parse-urdf robot-urdf))))
         (kitchen (or *kitchen-urdf*
                      (let ((kitchen-urdf-string
                              (roslisp:get-param *kitchen-parameter* nil)))
                        (when kitchen-urdf-string
                          (setf *kitchen-urdf* (cl-urdf:parse-urdf
                                                kitchen-urdf-string)))))))
-    ;; set Boxy URDF root link to be base_footprint not odom,
-    ;; as with odom lots of problems concerning object-pose in bullet happen
-    (setf (slot-value rob-int:*robot-urdf* 'cl-urdf:root-link)
-          (or (gethash cram-tf:*robot-base-frame*
-                       (cl-urdf:links rob-int:*robot-urdf*))
-              (error "[setup-bullet-world] cram-tf:*robot-base-frame* was undefined or smt.")))
-    ;; get rid of Boxy's camera obstacle thing, it's bad for visibility reasoning
-    ;; it's an annoying hack anyway...
-    ;; (setf (slot-value
-    ;;        (gethash "neck_obstacle"
-    ;;                 (cl-urdf:links rob-int:*robot-urdf*))
-    ;;        'cl-urdf:collision)
-    ;;       NIL)
-    ;; (setf (slot-value
-    ;;        (gethash "neck_look_target"
-    ;;                 (cl-urdf:links rob-int:*robot-urdf*))
-    ;;        'cl-urdf:collision)
-    ;;       NIL)
 
+    (if (search "hsrb" robot-urdf)
+        (setf robot (get-urdf-hsrb))
+        (when (search "boxy" robot-urdf )
+          (get-setup-boxy)))
+        
     (assert
      (cut:force-ll
       (prolog `(and
@@ -77,34 +62,32 @@
                 (btr:assert ?w (btr:object :urdf :kitchen ((0 0 0) (0 0 0 1))
                                                  :collision-group :static-filter
                                                  :collision-mask (:default-filter
-                                                                  :character-filter)
+                                                                 :character-filter)
                                                  :urdf ,kitchen
                                                  :compound T))
                 (-> (cram-robot-interfaces:robot ?robot)
                     (btr:assert ?w (btr:object :urdf ?robot ((0 0 0) (0 0 0 1)) :urdf ,robot))
                     (warn "ROBOT was not defined. Have you loaded a robot package?")))))))
 
-  (let ((robot-object (btr:get-robot-object)))
+
+ (let ((robot-object (btr:get-robot-object)))
     (if robot-object
         (btr:set-robot-state-from-tf cram-tf:*transformer* robot-object)
         (warn "ROBOT was not defined. Have you loaded a robot package?"))))
 
 (defun init-projection ()
-  ;; for better precision in reading URDFs
-  (setf cl:*read-default-float-format* 'cl:double-float)
-
   (def-fact-group costmap-metadata ()
     (<- (location-costmap:costmap-size 12 12))
     (<- (location-costmap:costmap-origin -6 -6))
     (<- (location-costmap:costmap-resolution 0.05))
 
     (<- (location-costmap:costmap-padding 0.5))
-    (<- (location-costmap:costmap-manipulation-padding 0.5))
-    (<- (location-costmap:costmap-in-reach-distance 1.0))
+    (<- (location-costmap:costmap-manipulation-padding 0.2))
+    (<- (location-costmap:costmap-in-reach-distance 0.7))
     (<- (location-costmap:costmap-reach-minimal-distance 0.2))
-    (<- (location-costmap:visibility-costmap-size 2.5))
-    (<- (location-costmap:orientation-samples 2))
-    (<- (location-costmap:orientation-sample-step 0.1)))
+    (<- (location-costmap:visibility-costmap-size 2.5)))
+  
+  (setf cram-tf:*tf-broadcasting-enabled* t)	
 
   (setf cram-tf:*transformer* (make-instance 'cl-tf2:buffer-client))
 
@@ -114,9 +97,5 @@
 
   (setf prolog:*break-on-lisp-errors* t)
 
-  (cram-bullet-reasoning:clear-costmap-vis-object)
-
-  (btr:add-objects-to-mesh-list "assembly_models" :directory "fixtures" :extension "stl")
-  (btr:add-objects-to-mesh-list "assembly_models" :directory "battat/convention" :extension "stl"))
-
+  (cram-bullet-reasoning:clear-costmap-vis-object))
 (roslisp-utilities:register-ros-init-function init-projection)
