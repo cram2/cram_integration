@@ -1,5 +1,4 @@
-;;;
-;;; Copyright (c) 2018, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
+;;; Copyright (c) 2019, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
 ;;; All rights reserved.
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
@@ -27,18 +26,19 @@
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
 
-(defsystem cram-boxy-assembly-demo
-  :author "gaya"
+(defsystem cram-hpn
+  :author "Gayane Kazhoyan"
   :license "BSD"
 
-  :depends-on (roslisp-utilities ; for ros-init-function
+  :depends-on (roslisp
+               roslisp-utilities
 
                cl-transforms
                cl-transforms-stamped
-               cl-tf
-               cl-tf2
                cram-tf
 
+               ;; below are pr2 pp demo dependencies
+               ;; clean them up TODO
                cram-language
                cram-executive
                cram-designators
@@ -49,36 +49,38 @@
 
                cram-common-failures
                cram-mobile-pick-place-plans
-               cram-robot-interfaces ; for *robot-urdf*
                cram-object-knowledge
-               ;; cram-robosherlock
 
-               cram-physics-utils ; for reading "package://" paths
+               cram-commander
+
+               cram-physics-utils     ; for reading "package://" paths
                cl-bullet ; for handling BOUNDING-BOX datastructures
                cram-bullet-reasoning
                cram-bullet-reasoning-belief-state
                cram-bullet-reasoning-utilities
                cram-btr-visibility-costmap
+               cram-btr-spatial-relations-costmap
 
                cram-robot-pose-gaussian-costmap
                cram-occupancy-grid-costmap
                cram-location-costmap
-               cram-manipulation-interfaces ; for standard rotations
 
                cram-urdf-projection      ; for with-simulated-robot
-               cram-boxy-description
-               ;; cram-boxy-low-level
-               cram-process-modules
-               ;; cram-boxy-process-modules
-               cram-boxy-plans   ; for (a location (on ?obj) (attachment ?att) ...)
+               cram-urdf-projection-reasoning ; to set projection reasoning to T
+               cram-fetch-deliver-plans
+               cram-urdf-environment-manipulation
+               ;; end of pp demo deps
 
-               ;; real robot
-               )
+               cram-pr2-description
 
+               hpn_cram_msgs-msg
+               hpn_cram_msgs-srv
+
+               cram-pr2-process-modules)
   :components
   ((:module "src"
     :components
     ((:file "package")
      (:file "setup" :depends-on ("package"))
-     (:file "projection-demo" :depends-on ("package"))
-     (:file "demo" :depends-on ("package" "projection-demo"))))))
+     (:file "bullet-interface" :depends-on ("package"))
+     (:file "ros-servers" :depends-on ("package" "bullet-interface"))))))
