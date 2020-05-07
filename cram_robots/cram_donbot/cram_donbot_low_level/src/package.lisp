@@ -1,5 +1,5 @@
 ;;;
-;;; Copyright (c) 2017, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
+;;; Copyright (c) 2019, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
 ;;; All rights reserved.
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
@@ -29,17 +29,9 @@
 
 (in-package :cl-user)
 
-(defpackage cram-boxy-low-level
-  (:nicknames #:boxy-ll)
+(defpackage cram-donbot-low-level
+  (:nicknames #:donbot-ll)
   (:use #:common-lisp)
   (:export
-   ;; neck
-   #:move-neck-joints
    ;; grippers
-   #:move-gripper-joint
-   ;; force-torque-sensor
-   #:*wrench-state-fluent*
-   ;; joint-action-client
-   #:move-arm-joints
-   ;; cart-action-client
-   #:move-arm-cartesian))
+   #:call-gripper-action))

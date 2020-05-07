@@ -1,5 +1,5 @@
 ;;;
-;;; Copyright (c) 2017, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
+;;; Copyright (c) 2019, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
 ;;; All rights reserved.
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
@@ -10,10 +10,9 @@
 ;;;     * Redistributions in binary form must reproduce the above copyright
 ;;;       notice, this list of conditions and the following disclaimer in the
 ;;;       documentation and/or other materials provided with the distribution.
-;;;     * Neither the name of the Institute for Artificial Intelligence/
-;;;       Universitaet Bremen nor the names of its contributors may be used to
-;;;       endorse or promote products derived from this software without
-;;;       specific prior written permission.
+;;;     * Neither the name of Willow Garage, Inc. nor the names of its
+;;;       contributors may be used to endorse or promote products derived from
+;;;       this software without specific prior written permission.
 ;;;
 ;;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 ;;; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -27,19 +26,28 @@
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
 
-(in-package :cl-user)
+(in-package :donbot-pm)
 
-(defpackage cram-boxy-low-level
-  (:nicknames #:boxy-ll)
-  (:use #:common-lisp)
-  (:export
-   ;; neck
-   #:move-neck-joints
-   ;; grippers
-   #:move-gripper-joint
-   ;; force-torque-sensor
-   #:*wrench-state-fluent*
-   ;; joint-action-client
-   #:move-arm-joints
-   ;; cart-action-client
-   #:move-arm-cartesian))
+(def-fact-group donbot-matching-pms (cpm:matching-process-module
+                                     cpm:available-process-module)
+
+  (<- (cpm:matching-process-module ?motion-designator grippers-pm)
+    (or (desig:desig-prop ?motion-designator (:type :gripping))
+        (desig:desig-prop ?motion-designator (:type :opening-gripper))
+        (desig:desig-prop ?motion-designator (:type :closing-gripper))
+        (desig:desig-prop ?motion-designator (:type :moving-gripper-joint))))
+
+  (<- (cpm:available-process-module ?pm)
+    (member ?pm (grippers-pm))
+    (not (cpm:projection-running ?_)))
+
+  (<- (cpm:available-process-module btr-belief:world-state-detecting-pm)))
+
+
+(defmacro with-real-robot (&body body)
+  `(cram-process-modules:with-process-modules-running
+       (donbot-pm:grippers-pm
+        rs:robosherlock-perception-pm giskard:giskard-pm
+        btr-belief:world-state-detecting-pm)
+     (cpl-impl::named-top-level (:name :top-level)
+       ,@body)))

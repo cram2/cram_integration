@@ -1,5 +1,5 @@
 ;;;
-;;; Copyright (c) 2017, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
+;;; Copyright (c) 2019, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
 ;;; All rights reserved.
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
@@ -27,19 +27,17 @@
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
 
-(in-package :cl-user)
+(in-package :donbot-pm)
 
-(defpackage cram-boxy-low-level
-  (:nicknames #:boxy-ll)
-  (:use #:common-lisp)
-  (:export
-   ;; neck
-   #:move-neck-joints
-   ;; grippers
-   #:move-gripper-joint
-   ;; force-torque-sensor
-   #:*wrench-state-fluent*
-   ;; joint-action-client
-   #:move-arm-joints
-   ;; cart-action-client
-   #:move-arm-cartesian))
+;;;;;;;;;;;;;;;;;;;; GRIPPERS ;;;;;;;;;;;;;;;;;;;;;;;;
+
+(cpm:def-process-module grippers-pm (motion-designator)
+  (destructuring-bind (command action-type-or-position which-gripper
+                       &optional effort-but-actually-slippage-parameter)
+      (desig:reference motion-designator)
+    (ecase command
+      (cram-common-designators:move-gripper-joint
+       (donbot-ll:call-gripper-action :action-type-or-position action-type-or-position
+                                      :left-or-right which-gripper
+                                      :effort-but-actually-slippage-parameter
+                                      effort-but-actually-slippage-parameter)))))
