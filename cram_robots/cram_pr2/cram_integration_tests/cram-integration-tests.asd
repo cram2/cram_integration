@@ -1,5 +1,4 @@
-;;;
-;;; Copyright (c) 2017, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
+;;; Copyright (c) 2020, Christopher Pollok <cpollok@uni-bremen.de>
 ;;; All rights reserved.
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
@@ -27,30 +26,48 @@
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
 
-(in-package :boxy-descr)
+(defsystem cram-integration-tests
+  :author "Christopher Pollok"
+  :license "BSD"
 
-(def-fact-group boxy-metadata (robot
-                               robot-odom-frame
-                               robot-base-frame robot-torso-link-joint)
-  (<- (robot boxy))
+  :depends-on (roslisp-utilities ; for ros-init-function
 
-  (<- (robot-odom-frame boxy "odom"))
+               cl-transforms
+               cl-transforms-stamped
+               cl-tf
+               cram-tf
 
-  (<- (robot-base-frame boxy "base_footprint"))
-  (<- (robot-torso-link-joint boxy "triangle_base_link" "triangle_base_joint")))
+               cram-language
+               cram-executive
+               cram-designators
+               cram-prolog
+               cram-projection
+               cram-occasions-events
+               cram-utilities ; for EQUALIZE-LISTS-OF-LISTS-LENGTHS
 
+               cram-common-failures
+               cram-mobile-pick-place-plans
+               cram-object-knowledge
 
-(def-fact-group location-costmap-metadata (costmap:costmap-padding
-                                           costmap:costmap-manipulation-padding
-                                           costmap:costmap-in-reach-distance
-                                           costmap:costmap-reach-minimal-distance
-                                           costmap:orientation-samples
-                                           costmap:orientation-sample-step
-                                           costmap:visibility-costmap-size)
-  (<- (costmap:costmap-padding 0.5))
-  (<- (costmap:costmap-manipulation-padding 0.2)) ; 0.5 (might be a little low now)
-  (<- (costmap:costmap-in-reach-distance 1.45))
-  (<- (costmap:costmap-reach-minimal-distance 0.65))
-  (<- (costmap:orientation-samples 1))
-  (<- (costmap:orientation-sample-step 0.3))
-  (<- (costmap:visibility-costmap-size 2)))
+               cram-physics-utils     ; for reading "package://" paths
+               cl-bullet ; for handling BOUNDING-BOX datastructures
+               cram-bullet-reasoning
+               cram-bullet-reasoning-belief-state
+               cram-bullet-reasoning-utilities
+
+               cram-location-costmap
+               cram-btr-visibility-costmap
+               cram-btr-spatial-relations-costmap
+               cram-robot-pose-gaussian-costmap
+               cram-occupancy-grid-costmap
+
+               cram-urdf-projection      ; for with-simulated-robot
+               cram-fetch-deliver-plans
+               cram-urdf-environment-manipulation
+
+               lisp-unit)
+
+  :components
+  ((:module "tests"
+    :components
+    ((:file "package")))))

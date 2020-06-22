@@ -1,5 +1,4 @@
-;;;
-;;; Copyright (c) 2017, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
+;;; Copyright (c) 2020, Christopher Pollok <cpollok@uni-bremen.de>
 ;;; All rights reserved.
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
@@ -27,30 +26,15 @@
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
 
-(in-package :boxy-descr)
+(defsystem cram-integration-tests-boxy
+  :author "Christopher Pollok"
+  :license "BSD"
 
-(def-fact-group boxy-metadata (robot
-                               robot-odom-frame
-                               robot-base-frame robot-torso-link-joint)
-  (<- (robot boxy))
+  :depends-on (cram-integration-tests
+               cram-boxy-description)
 
-  (<- (robot-odom-frame boxy "odom"))
-
-  (<- (robot-base-frame boxy "base_footprint"))
-  (<- (robot-torso-link-joint boxy "triangle_base_link" "triangle_base_joint")))
-
-
-(def-fact-group location-costmap-metadata (costmap:costmap-padding
-                                           costmap:costmap-manipulation-padding
-                                           costmap:costmap-in-reach-distance
-                                           costmap:costmap-reach-minimal-distance
-                                           costmap:orientation-samples
-                                           costmap:orientation-sample-step
-                                           costmap:visibility-costmap-size)
-  (<- (costmap:costmap-padding 0.5))
-  (<- (costmap:costmap-manipulation-padding 0.2)) ; 0.5 (might be a little low now)
-  (<- (costmap:costmap-in-reach-distance 1.45))
-  (<- (costmap:costmap-reach-minimal-distance 0.65))
-  (<- (costmap:orientation-samples 1))
-  (<- (costmap:orientation-sample-step 0.3))
-  (<- (costmap:visibility-costmap-size 2)))
+  :components
+  ((:module "tests"
+    :components ((:file "package")
+                 (:module "boxy" :depends-on ("package")
+                  :components ((:file "setup")))))))
