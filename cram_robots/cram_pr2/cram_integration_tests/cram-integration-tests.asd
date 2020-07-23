@@ -1,5 +1,4 @@
-;;;
-;;; Copyright (c) 2019, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
+;;; Copyright (c) 2020, Christopher Pollok <cpollok@uni-bremen.de>
 ;;; All rights reserved.
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
@@ -10,10 +9,10 @@
 ;;;     * Redistributions in binary form must reproduce the above copyright
 ;;;       notice, this list of conditions and the following disclaimer in the
 ;;;       documentation and/or other materials provided with the distribution.
-;;;     * Neither the name of the Intelligent Autonomous Systems Group/
-;;;       Technische Universitaet Muenchen nor the names of its contributors 
-;;;       may be used to endorse or promote products derived from this software 
-;;;       without specific prior written permission.
+;;;     * Neither the name of the Institute for Artificial Intelligence/
+;;;       Universitaet Bremen nor the names of its contributors may be used to
+;;;       endorse or promote products derived from this software without
+;;;       specific prior written permission.
 ;;;
 ;;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 ;;; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -27,16 +26,15 @@
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
 
-(defsystem cram-donbot-retail-demo
-  :author "gaya"
+(defsystem cram-integration-tests
+  :author "Christopher Pollok"
   :license "BSD"
 
   :depends-on (roslisp-utilities ; for ros-init-function
 
                cl-transforms
                cl-transforms-stamped
-               ;; cl-tf
-               ;; cl-tf2
+               cl-tf
                cram-tf
 
                cram-language
@@ -46,41 +44,30 @@
                cram-projection
                cram-occasions-events
                cram-utilities ; for EQUALIZE-LISTS-OF-LISTS-LENGTHS
-               cram-process-modules
 
                cram-common-failures
                cram-mobile-pick-place-plans
-               cram-robot-interfaces ; for *robot-urdf*
                cram-object-knowledge
-               cram-manipulation-interfaces ; for standard rotations
 
-               cram-physics-utils ; for reading "package://" paths
+               cram-physics-utils     ; for reading "package://" paths
                cl-bullet ; for handling BOUNDING-BOX datastructures
                cram-bullet-reasoning
                cram-bullet-reasoning-belief-state
                cram-bullet-reasoning-utilities
-               cram-urdf-projection      ; for with-simulated-robot
-               cram-urdf-projection-reasoning
 
                cram-location-costmap
                cram-btr-visibility-costmap
-               cram-robot-pose-gaussian-costmap
                cram-btr-spatial-relations-costmap
-               ;; cram-occupancy-grid-costmap
+               cram-robot-pose-gaussian-costmap
+               cram-occupancy-grid-costmap
 
+               cram-urdf-projection      ; for with-simulated-robot
                cram-fetch-deliver-plans
+               cram-urdf-environment-manipulation
 
-               cram-donbot-description
-
-               ;; real robot
-               ;; cram-robosherlock
-               ;; cram-giskard
-               ;; cram-donbot-process-modules
-               )
+               lisp-unit)
 
   :components
-  ((:module "src"
+  ((:module "tests"
     :components
-    ((:file "package")
-     (:file "setup" :depends-on ("package"))
-     (:file "demo" :depends-on ("package"))))))
+    ((:file "package")))))
