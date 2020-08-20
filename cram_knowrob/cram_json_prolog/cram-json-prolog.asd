@@ -1,5 +1,5 @@
 ;;;
-;;; Copyright (c) 2018, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
+;;; Copyright (c) 2009, Lorenz Moesenlechner <moesenle@cs.tum.edu>
 ;;; All rights reserved.
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
@@ -10,10 +10,9 @@
 ;;;     * Redistributions in binary form must reproduce the above copyright
 ;;;       notice, this list of conditions and the following disclaimer in the
 ;;;       documentation and/or other materials provided with the distribution.
-;;;     * Neither the name of the Institute for Artificial Intelligence/
-;;;       Universitaet Bremen nor the names of its contributors may be used to
-;;;       endorse or promote products derived from this software without
-;;;       specific prior written permission.
+;;;     * Neither the name of Willow Garage, Inc. nor the names of its
+;;;       contributors may be used to endorse or promote products derived from
+;;;       this software without specific prior written permission.
 ;;;
 ;;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 ;;; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -26,22 +25,30 @@
 ;;; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
+;;;
 
-(in-package :giskard)
+(in-package :asdf)
 
-(defun make-giskard-action-client ()
-  (actionlib-client:make-simple-action-client
-   'giskard-action
-   "giskardpy/command" "giskard_msgs/MoveAction"
-   120))
+(defsystem "cram-json-prolog"
+  :author "Lorenz Moesenlechner"
+  :version "0.2"
+  :maintainer "Lorenz Moesenlechner <moesenle@in.tum.de>"
+  :license "BSD"
+  :description "A json_prolog server/client library for cram-prolog."
 
-(roslisp-utilities:register-ros-init-function make-giskard-action-client)
+  :depends-on (:cram-utilities
+               :cram-prolog
+               :json_prolog_msgs-srv
+               :yason
+               :roslisp
+               :alexandria)
 
-
-
-(defun ensure-goal-reached (status)
-  (when (eql status :preempted)
-    (roslisp:ros-warn (giskard env-manip) "Giskard action preempted.")
-    (return-from ensure-goal-reached))
-  (when (eql status :timeout)
-    (roslisp:ros-warn (giskard env-manip) "Giskard action timed out.")))
+  :components
+  ((:module "src"
+            :components
+            ((:file "package")
+             ;; (:file "server" :depends-on ("package"))
+             ;; (:file "json-conversion" :depends-on ("package"))
+             (:file "conversion" :depends-on ("package"))
+             (:file "prolog-interface" :depends-on ("package" "conversion"))
+             (:file "prolog-handlers" :depends-on ("package" "prolog-interface"))))))
