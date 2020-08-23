@@ -27,11 +27,10 @@
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
 
-(in-package :pr2-pms)
+(in-package :pr2-sim-pms)
 
 (defmacro with-real-robot (&body body)
   `(cram-process-modules:with-process-modules-running
-       (rs:robosherlock-perception-pm  ;; navp:navp-pm
-        pr2-grippers-pm pr2-ptu-pm giskard-pm)
+       (giskard-pm bullet-perception-pm)
      (cpl-impl::named-top-level (:name :top-level)
        ,@body)))
