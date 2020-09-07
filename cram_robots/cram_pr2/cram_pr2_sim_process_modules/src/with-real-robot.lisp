@@ -1,5 +1,5 @@
 ;;;
-;;; Copyright (c) 2017, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
+;;; Copyright (c) 2018, Gayane Kazhoyan <kazhoyan@cs.uni-bremen.de>
 ;;; All rights reserved.
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
@@ -27,16 +27,10 @@
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
 
-(in-package :boxy-pm)
+(in-package :pr2-sim-pms)
 
-;;;;;;;;;;;;;;;;;;;; GRIPPERS ;;;;;;;;;;;;;;;;;;;;;;;;
-
-(cpm:def-process-module grippers-pm (motion-designator)
-  (destructuring-bind (command action-type-or-position which-gripper &optional effort)
-      (desig:reference motion-designator)
-    (ecase command
-      (cram-common-designators:move-gripper-joint
-       (boxy-ll:move-gripper-joint
-        :action-type-or-position action-type-or-position
-        :left-or-right which-gripper
-        :effort effort)))))
+(defmacro with-real-robot (&body body)
+  `(cram-process-modules:with-process-modules-running
+       (giskard:giskard-pm bullet-perception-pm)
+     (cpl-impl::named-top-level (:name :top-level)
+       ,@body)))
