@@ -1,5 +1,5 @@
 ;;;
-;;; Copyright (c) 2009, Lorenz Moesenlechner <moesenle@cs.tum.edu>
+;;; Copyright (c) 2021, Arthur Niedzwiecki <aniedz@cs.uni-bremen.de>
 ;;; All rights reserved.
 ;;;
 ;;; Redistribution and use in source and binary forms, with or without
@@ -10,9 +10,10 @@
 ;;;     * Redistributions in binary form must reproduce the above copyright
 ;;;       notice, this list of conditions and the following disclaimer in the
 ;;;       documentation and/or other materials provided with the distribution.
-;;;     * Neither the name of Willow Garage, Inc. nor the names of its
-;;;       contributors may be used to endorse or promote products derived from
-;;;       this software without specific prior written permission.
+;;;     * Neither the name of the Intelligent Autonomous Systems Group/
+;;;       Technische Universitaet Muenchen nor the names of its contributors
+;;;       may be used to endorse or promote products derived from this software
+;;;       without specific prior written permission.
 ;;;
 ;;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 ;;; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -25,24 +26,12 @@
 ;;; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ;;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;; POSSIBILITY OF SUCH DAMAGE.
-;;;
 
 (in-package :cl-user)
 
-(defpackage :json-prolog
-    (:use #:common-lisp #:cram-utilities #:roslisp)
-  (:export #:*service-namespace*
-           #:check-connection
-           #:prolog
-           #:prolog-1
-           #:prolog-simple
-           #:prolog-simple-1
-           #:finish-query
-           #:json-prolog
-           ;; #:wait-for-prolog-service
-           ;; #:with-type-atoms
-           ;; #:init-type-atoms
-           ;; #:clear-type-atoms
-           ;; #:replace-complex-types
-           ;; #:start-prolog-server
-           ))
+(defpackage cram-pr2-unreal-process-modules
+  (:nicknames :pr2-unreal-pms)
+  (:use #:common-lisp)
+  (:export
+   ;; with-unreal-robot
+   #:with-unreal-robot))
