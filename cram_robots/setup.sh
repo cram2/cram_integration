@@ -11,8 +11,9 @@ find -name "cram_*" -exec touch  {}/CATKIN_IGNORE \;
 mkdir "scripts"
 touch "scripts/CATKIN_IGNORE"
 
-echo "/scripts" >>".gitignore"
-echo "CATKIN_IGNORE" >>".gitignore"
+echo "/scripts" >>.gitignore
+echo "CATKIN_IGNORE" >>.gitignore
+echo "setup.sh" >>.gitignore
 
 echo "alias cram_swap_processmodules='${file}'" >> ~/.bashrc
 
