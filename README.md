@@ -27,7 +27,7 @@
    ```
 7. Make sure the setup script is executable and run the script
    ```
-   chmod +x src/cram_integration/cram_robots/setup.sh && source src/cram_integration/cram_robots/setup.sh
+   source src/cram_integration/cram_robots/setup.sh
    ```
 8. Build the workspace:
    ```
