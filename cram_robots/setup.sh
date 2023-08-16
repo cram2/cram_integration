@@ -6,7 +6,7 @@ file="${path}scripts/init_pm.sh"
 
 cd "$path"
 
-find -name "*_process_modules" -exec touch  {}/CATKIN_IGNORE \;
+find -name "cram_*" -exec touch  {}/CATKIN_IGNORE \;
 
 mkdir "scripts"
 touch "scripts/CATKIN_IGNORE"
@@ -21,7 +21,7 @@ echo "alias cram_swap_processmodules='${file}'" >> ~/.bashrc
 
 cd "$path"
 
-find -name "*_process_modules" -exec touch  {}/CATKIN_IGNORE \;
+find -name "cram_*" -exec touch  {}/CATKIN_IGNORE \;
 
 for dir in cram_*; do
     robot=\${dir#cram_}
@@ -56,6 +56,8 @@ while true; do
 done
 
 cd cram_"\$robot"
+
+find -name "cram_*" -not -ipath "*_process_modules" -exec rm {}/CATKIN_IGNORE \;
 
 for dir in *_process_modules; do
 
@@ -116,6 +118,8 @@ EOM
 chmod +x "${file}"
 
 rm "${path}setup.sh"
+
+cd ../../..
 
 echo
 echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
