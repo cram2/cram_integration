@@ -8,16 +8,36 @@ cd "$path"
 
 find -name "cram_*" -exec touch  {}/CATKIN_IGNORE \;
 
-mkdir "scripts"
-touch "scripts/CATKIN_IGNORE"
+if [ -d "scripts" ]; then
+    echo
+    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    echo
+    echo "It seems like you have executed the setup script before."
+    echo "Avoid executing it multiple times to avoid cluttering your bashrc"
+    echo "If you wanted to swap between available processmodules, use the 'cram_swap_processmodules' command"
+    echo "Do you want to proceed? (yes/no)"
+    echo
+    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+fi
 
-echo "/scripts" >>.gitignore
-echo "CATKIN_IGNORE" >>.gitignore
-echo "setup.sh" >>.gitignore
 
-echo "alias cram_swap_processmodules='${file}'" >> ~/.bashrc
+while true; do
 
-/bin/cat <<EOM >>$file
+    read proceed
+    
+    if [[ "${proceed}" == "no" ]]; then
+	break
+    elif [[ "${proceed}" == "yes" ]]; then
+
+	mkdir "scripts"
+	touch "scripts/CATKIN_IGNORE"
+
+	echo "/scripts" >>.gitignore
+	echo "CATKIN_IGNORE" >>.gitignore
+
+	echo "alias cram_swap_processmodules='${file}'" >> ~/.bashrc
+
+	/bin/cat <<EOM >>$file
 #!/usr/bin/bash
 
 cd "$path"
@@ -116,17 +136,22 @@ echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 EOM
 
-chmod +x "${file}"
+	chmod +x "${file}"
 
-rm "${path}setup.sh"
+	rm "${path}setup.sh"
 
-cd ../../..
+	cd ../../..
 
-echo
-echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-echo
-echo "You can now swap between available processmodules using the 'cram_swap_processmodules' command"
-echo
-echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+	echo
+	echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+	echo
+	echo "You can now swap between available processmodules using the 'cram_swap_processmodules' command"
+	echo
+	echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 
-source ~/.bashrc
+	source ~/.bashrc
+    else
+        echo "Please respond with 'yes' or 'no'"
+    fi
+
+done
