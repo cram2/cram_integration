@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 path=$(readlink -f "${BASH_SOURCE:-$0}")
-path=${path%%init_pm.sh}
+path=${path%%setup.sh}
 file="${path}scripts/init_pm.sh"
 
 cd "$path"
