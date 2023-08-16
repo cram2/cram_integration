@@ -9,41 +9,37 @@ cd "$path"
 find -name "cram_*" -exec touch  {}/CATKIN_IGNORE \;
 
 if [ -d "scripts" ]; then
-    echo
-    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    echo
-    echo "It seems like you have executed the setup script before."
-    echo "Avoid executing it multiple times to avoid cluttering your bashrc"
-    echo "If you wanted to swap between available processmodules, use the 'cram_swap_processmodules' command"
-    echo "Do you want to proceed? (yes/no)"
-    echo
-    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    echo "
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+It seems like you have executed the setup script before.
+Avoid executing it multiple times to avoid cluttering your bashrc.
+If you wanted to swap between available process modules, use the 'cram_swap_processmodules' command.
+Do you want to proceed? (yes/no)
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+"
+    read -r proceed
+
+    if [[ ! "$proceed" == "yes" ]]; then
+        return 0
+    fi
 fi
 
+mkdir -p "scripts"
+touch "scripts/CATKIN_IGNORE"
 
-while true; do
+echo "/scripts" >> .gitignore
+echo "**/CATKIN_IGNORE" >> .gitignore
 
-    read proceed
-    
-    if [[ "${proceed}" == "no" ]]; then
-	break
-    elif [[ "${proceed}" == "yes" ]]; then
+echo "alias cram_swap_processmodules='${file}'" >> ~/.bashrc
 
-	mkdir "scripts"
-	touch "scripts/CATKIN_IGNORE"
-
-	echo "/scripts" >>.gitignore
-	echo "CATKIN_IGNORE" >>.gitignore
-
-	echo "alias cram_swap_processmodules='${file}'" >> ~/.bashrc
-
-	/bin/cat <<EOM >>$file
+cat <<EOM >>$file
 #!/usr/bin/bash
 
 cd "$path"
 
 find -name "cram_*" -exec touch  {}/CATKIN_IGNORE \;
 
+robots=()
 for dir in cram_*; do
     robot=\${dir#cram_}
 
@@ -65,21 +61,20 @@ while true; do
     echo "\$options"
     echo
     echo
-    echo "Please Enter the Robot you are using"
-    read robot
+    read -r -p "Please enter the Robot you are using: " robot
 
     if [[ " \${robots[*]} " == *" \$robot "* ]]; then
         break
     else
         echo "\$robot not found. Please select from the available robots."
     fi
-
 done
 
 cd cram_"\$robot"
 
 find -name "cram_*" -not -ipath "*_process_modules" -exec rm {}/CATKIN_IGNORE \;
 
+pms=()
 for dir in *_process_modules; do
 
     if [[ "\$dir" == "cram_\${robot}_process_modules" ]]; then
@@ -109,8 +104,7 @@ while true; do
     echo "\$options"
     echo
     echo
-    echo "Please Enter the process module you want to use:"
-    read pm
+    read -r -p "Please enter the process module you want to use: " pm
 
     if [[ " \${pms[*]} " == *" \$pm "* ]]; then
         break
@@ -127,31 +121,22 @@ if [[ "\$pm" == "realworld" ]]; then
 
 rm CATKIN_IGNORE
 
-echo
-echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-echo 
-echo "Please remember to build the workspace again in order for the changes to take effect"
-echo
-echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+echo "
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Please remember to build the workspace again for the changes to take effect
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+"
 
 EOM
 
-	chmod +x "${file}"
+chmod +x "${file}"
 
-	rm "${path}setup.sh"
+cd ../../..
 
-	cd ../../..
+echo "
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+You can now swap between available process modules using the 'cram_swap_processmodules' command
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+"
 
-	echo
-	echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-	echo
-	echo "You can now swap between available processmodules using the 'cram_swap_processmodules' command"
-	echo
-	echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-
-	source ~/.bashrc
-    else
-        echo "Please respond with 'yes' or 'no'"
-    fi
-
-done
+source ~/.bashrc
