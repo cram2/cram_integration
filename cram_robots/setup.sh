@@ -6,7 +6,13 @@ file="${path}scripts/init_pm.sh"
 
 cd "$path"
 
-find -name "cram_*" -exec touch  {}/CATKIN_IGNORE \;
+for dir in cram_*; do
+    cd "$dir"
+    find -name "cram_*" -exec touch  {}/CATKIN_IGNORE \;
+    cd "$path"
+done
+
+
 
 if [ -d "scripts" ]; then
     echo "
@@ -28,7 +34,6 @@ mkdir -p "scripts"
 touch "scripts/CATKIN_IGNORE"
 
 echo "/scripts" >> .gitignore
-echo "**/CATKIN_IGNORE" >> .gitignore
 
 echo "alias cram_swap_processmodules='${file}'" >> ~/.bashrc
 
